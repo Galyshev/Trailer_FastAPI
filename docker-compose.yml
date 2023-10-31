@@ -1,0 +1,18 @@
+# TODO при создании контейнера файл выложить в корневой каталог
+version: "3.9"
+services:
+  web:
+    build: .
+
+    environment:
+      - DB_HOST=postgres_container
+      - DB_USER=postgres
+      - DB_PASSWORD=postgres
+  db:
+    image: postgres:14.1-alpine
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+    ports:
+      - "5436:5432"
+    hostname: postgres_container
