@@ -13,4 +13,7 @@ trailers = Table(
     Column("status", String),
     Column("date_update", String),
     Column("title", String),
+    Column("genre", String),
+    Column("link_film", String),
+    Column("cover", String),
 )

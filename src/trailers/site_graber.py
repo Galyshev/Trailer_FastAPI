@@ -6,7 +6,7 @@ from bs4 import BeautifulSoup
 from fastapi import Depends
 from selenium import webdriver
 from selenium.webdriver.firefox.options import Options
-from sqlalchemy import select
+from sqlalchemy import select, insert
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.alchemy import get_async_session
@@ -71,6 +71,7 @@ async def link_graber(session: AsyncSession = Depends(get_async_session)):
             soup = BeautifulSoup(r.text, 'html.parser')
             # название фильма
             title = soup.find('h1').text
+            genre = soup.find('span', {'class': 'ipc-chip__text'}).text
             # ссылка на обложку
             cover_link = 'https://www.imdb.com' + soup.find("a", {'href': re.compile('..\/mediaviewer/.*')})['href']
             # поиск прямой ссылки с сайта Амазона
@@ -78,17 +79,21 @@ async def link_graber(session: AsyncSession = Depends(get_async_session)):
             r = requests.get(cover_link, headers=headers)
             soup_cover = BeautifulSoup(r.text, 'html.parser')
             cover_link_part = cover_link.split('/')[-2] + '-curr'
-            cover = soup_cover.find("div", {'class': 'ghbUKT'}).find("img", {'data-image-id': cover_link_part})['src']
-            # сохранение обложки на диск, что бы не парсить постоянно и сэкономить времяю Потом картинки будут удаляться
-            destination = "./cover/" + id_film + ".jpg"
-            r = requests.get(cover, stream=True)
-            with open(destination, 'wb') as f:
-                f.write(r.content)
-
+            try:
+                cover = soup_cover.find("div", {'class': 'ghbUKT'}).find("img", {'data-image-id': cover_link_part})[
+                    'src']
+                # сохранение обложки на диск, что бы не парсить постоянно и сэкономить времяю Потом картинки будут удаляться
+                destination = "./static/cover/" + id_film + ".jpg"
+                r = requests.get(cover, stream=True)
+                with open(destination, 'wb') as f:
+                    f.write(r.content)
+            except:
+                destination = './static/cover/no_image.jpg'
+            cover = destination[9:]
+            print(cover)
             add_trailer = {"id_film": id_film, "id_video": id_video, "link_trailer": link_trailer,
                            'link_film': link_film,
-                           "status": status, "date_update": date_update, "title": title}
-            # stmt = insert(trailers).values(add_trailer)
-            # await session.execute(stmt)
-            # await session.commit()
-            print(add_trailer)
+                           "status": status, "date_update": date_update, "title": title, "genre": genre, "cover": cover}
+            stmt = insert(trailers).values(add_trailer)
+            await session.execute(stmt)
+            await session.commit()

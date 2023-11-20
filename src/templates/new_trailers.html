@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% block head %}
+{{ super() }}
+<style type="text/css">
+</style>
+{% endblock %}
+{% block content %}
+<form action="/pages/detail" method="post">
+
+    <div class="container_detail_out">
+        {% for k in rez %}
+        <div class="cont_detail">
+            <button onclick="window.location='/'" value="{{ k.id_film }}" class="btn_out" name="btn_det">
+                <img src="/static/{{ k.cover }}" alt="{{ k.title }}" class="img_out">
+            </button>
+            <div class="cont_detail_txt">
+                <!--            <p class="p_title">{{ k.title }}</p>-->
+                <p class="p_detail">{{ k.genre }}</p>
+                <button type="submit" name="cont_author" class="cont_author"> Показати книги автора</button>
+            </div>
+
+        </div>
+
+        {% endfor %}
+    </div>
+
+</form>
+{% endblock %}
