@@ -27,3 +27,9 @@ async def no_view_trailers_pages(request: Request, session: AsyncSession = Depen
 async def trailers_detail(request: Request, btn_det=Form()):
     print(btn_det)
     return templates.TemplateResponse('tmp.html', {"request": request})
+
+
+@router.post('/del')
+async def trailers_del(request: Request, btn_del=Form()):
+    print(btn_del)
+    return templates.TemplateResponse('tmp.html', {"request": request})

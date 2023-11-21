@@ -2,13 +2,13 @@
 <html>
 <head>
     {% block head %}
-    <link rel="stylesheet" href="{{ url_for('static', path='css/style.css') }}">
+    <link href="{{ url_for('static', path='/css/styles.css') }}" rel="stylesheet">
     <title>{{ title }}</title>
     {% endblock %}
 </head>
 <body>
-<div id="content">{% block content %} {% endblock %}</div>
-<div id="footer">
+<div>{% block content %} {% endblock %}</div>
+<div>
     {% block footer %} {% endblock %}
 </div>
 </body>

@@ -5,24 +5,26 @@
 </style>
 {% endblock %}
 {% block content %}
-<form action="/pages/detail" method="post">
 
-    <div class="container_detail_out">
-        {% for k in rez %}
-        <div class="cont_detail">
-            <button onclick="window.location='/'" value="{{ k.id_film }}" class="btn_out" name="btn_det">
+{% for k in rez %}
+<table>
+    <td>
+        <form action="/pages/detail" method="post">
+            <button value="{{ k.id_film }}" class="btn_out" name="btn_det">
                 <img src="/static/{{ k.cover }}" alt="{{ k.title }}" class="img_out">
             </button>
-            <div class="cont_detail_txt">
-                <!--            <p class="p_title">{{ k.title }}</p>-->
-                <p class="p_detail">{{ k.genre }}</p>
-                <button type="submit" name="cont_author" class="cont_author"> Показати книги автора</button>
-            </div>
+        </form>
+    </td>
 
-        </div>
+    <td valign="top">
+        <form action="/pages/del" method="post">
+            <h1>{{ k.title }}</h1>
+            <h3>{{ k.genre }}</h3>
+            <button class="favorite styled btn_del" name="btn_del" value="del">Просмотренно</button>
+        </form>
+    </td>
 
-        {% endfor %}
-    </div>
+</table>
+{% endfor %}
 
-</form>
 {% endblock %}
