@@ -71,7 +71,25 @@ async def link_graber(session: AsyncSession = Depends(get_async_session)):
             soup = BeautifulSoup(r.text, 'html.parser')
             # название фильма
             title = soup.find('h1').text
+            # жанр фильма
             genre = soup.find('span', {'class': 'ipc-chip__text'}).text
+            # в ролях
+            roles = soup.find('div', {'class': 'iRxAxS'}).findAll('a', {
+                'class': 'ipc-metadata-list-item__list-content-item'})
+            ls_director = []
+            ls_writers = []
+            ls_stars = []
+            for role in roles:
+                part_ov = str(role['href']).split('=')[-1]
+                if part_ov == 'tt_ov_dr':
+                    ls_director.append(role.text)
+                elif part_ov == 'tt_ov_wr':
+                    ls_writers.append(role.text)
+                elif part_ov == 'tt_ov_st':
+                    ls_stars.append(role.text)
+                else:
+                    pass
+
             # ссылка на обложку
             cover_link = 'https://www.imdb.com' + soup.find("a", {'href': re.compile('..\/mediaviewer/.*')})['href']
             # поиск прямой ссылки с сайта Амазона
@@ -90,9 +108,25 @@ async def link_graber(session: AsyncSession = Depends(get_async_session)):
             except:
                 destination = './static/cover/no_image.jpg'
             cover = destination[9:]
-            print(cover)
+
+            if len(ls_director) != 0:
+                director = str(ls_director).replace('[', '').replace(']', '').replace('\'', '')
+            else:
+                director = 'no_data'
+
+            if len(ls_writers) != 0:
+                writers = str(ls_writers).replace('[', '').replace(']', '').replace('\'', '')
+            else:
+                writers = 'no_data'
+
+            if len(ls_stars) != 0:
+                stars = str(ls_stars).replace('[', '').replace(']', '').replace('\'', '')
+            else:
+                stars = 'no_data'
+
+            print(title)
             add_trailer = {"id_film": id_film, "id_video": id_video, "link_trailer": link_trailer,
-                           'link_film': link_film,
+                           "link_film": link_film, "director": director, "writers": writers, "stars": stars,
                            "status": status, "date_update": date_update, "title": title, "genre": genre, "cover": cover}
             stmt = insert(trailers).values(add_trailer)
             await session.execute(stmt)

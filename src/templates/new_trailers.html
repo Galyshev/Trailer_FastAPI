@@ -19,8 +19,15 @@
     <td valign="top">
         <form action="/pages/del" method="post">
             <h1>{{ k.title }}</h1>
-            <h3>{{ k.genre }}</h3>
-            <button class="favorite styled btn_del" name="btn_del" value="del">Просмотренно</button>
+            <p>Жанр:
+            <h3> {{ k.genre }}</h3></p>
+            <p>Режисер:
+            <h3> {{ k.director }}</h3></p>
+            <p>Авторы сценария:
+            <h3> {{ k.writers }}</h3></p>
+            <p>В ролях:
+            <h3> {{ k.stars }}</h3></p>
+            <button class="favorite styled btn_del" name="btn_del" value="{{ k.id_film }}">Просмотренно</button>
         </form>
     </td>
 
